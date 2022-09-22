@@ -5,6 +5,7 @@
 # 4) Total number of votes each candidate won
 # 5) Winner of election (popular vote)
 
+#add dependencies
 import csv
 import os
 
@@ -57,37 +58,55 @@ with open(file_to_load) as election_data:
 
         #add votes for whatever candidate
         candidate_votes[candidate_name] += 1
-        
-#journey to find percentage of vote for each candidate
-#iterate thru candidate list
-for candidate_name in candidate_votes:
 
-    #retrieve vote count of candidate
-    votes = candidate_votes[candidate_name]
+#save results to text file
+with open(file_to_save, "w") as txt_file:
+    
+    #string w a header + final vote count
+    election_results = (
+        f"\nElection Results\n"
+        f"-------------------------\n"
+        f"Total votes: {total_votes:,}\n"
+        f"-------------------------\n")
+    
+    #print + save final vote count to file
+    print(election_results, end="")
+    txt_file.write(election_results)
 
-    #calculate percentage of votes
-    vote_percentage = float(votes) / float(total_votes) * 100
+    #journey to find percentage of vote for each candidate
+    #iterate thru candidate list
+    for candidate_name in candidate_votes:
 
-    #print candidate name + vote percentage + votes
-    print(f"{candidate_name}: {vote_percentage:.1f}% ({votes:,})\n")
+        #retrieve vote count of candidate
+        votes = candidate_votes[candidate_name]
 
-    #journey to determine winning candidate + count
-    #determine whether votes greater than winning count
-    if (votes > winning_count) and (vote_percentage > winning_percentage):
+        #calculate percentage of votes
+        vote_percentage = float(votes) / float(total_votes) * 100
 
-        #if true, set new winning count and percentage
-        winning_count = votes
-        winning_percentage = vote_percentage
+        #print candidate name + vote percentage + votes & save to file
+        candidate_results = (f"{candidate_name}: {vote_percentage:.1f}% ({votes:,})\n")
+        print(candidate_results)
+        txt_file.write(candidate_results)
 
-        #set winner = candidate name
-        winning_candidate = candidate_name
+        #journey to determine winning candidate + count
+        #determine whether votes greater than winning count
+        if (votes > winning_count) and (vote_percentage > winning_percentage):
 
-winning_candidate_summary = (
-    f"-------------------------\n"
-    f"Winner: {winning_candidate}\n"
-    f"Winning Vote Count: {winning_count:,}\n"
-    f"Winning Percentage: {winning_percentage:.1f}%\n"
-    f"-------------------------\n")
+            #if true, set new winning count and percentage
+            winning_count = votes
+            winning_percentage = vote_percentage
 
-print(winning_candidate_summary)
-        
+            #set winner = candidate name
+            winning_candidate = candidate_name
+
+    #string w winner info
+    winning_candidate_summary = (
+        f"-------------------------\n"
+        f"Winner: {winning_candidate}\n"
+        f"Winning Vote Count: {winning_count:,}\n"
+        f"Winning Percentage: {winning_percentage:.1f}%\n"
+        f"-------------------------\n")
+
+    #print winning candidate summary + save to txt file
+    print(winning_candidate_summary)
+    txt_file.write(winning_candidate_summary)
